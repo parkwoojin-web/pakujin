@@ -244,3 +244,38 @@ code, pre, .terminal { font-family: "D2Coding", "SFMono-Regular", Menlo, Consola
 }
 .toast.show { opacity: 1; }
 .footer-note { margin-top: 40px; font-size: 13px; color: var(--text-2); text-align: center; }
+
+/* 인쇄 */
+.print-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 20px; }
+.print-cover h1 { font-size: 32px; }
+.print-toc { padding-left: 2.4em; }
+.print-toc li { margin: 4px 0; }
+.print-date { color: var(--text-2); font-size: 14px; }
+.print-lesson { margin-top: 56px; }
+
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --bg: #ffffff; --surface: #ffffff; --surface-2: #f2f0eb; --text: #000000; --text-2: #444444;
+    --border: #cccccc; --accent: #9a3412; --accent-soft: #f7f2ee; --ok: #15803d; --code-bg: #f5f5f5;
+    color-scheme: light;
+  }
+  body { background: #fff; font-size: 11pt; line-height: 1.6; }
+  .topbar, .sidebar, .backdrop, .toast, .no-print, .copy-btn, .lesson-footer, .keybar { display: none !important; }
+  .layout { display: block; min-height: 0; }
+  .main { padding: 0; }
+  .content { max-width: none; }
+  a { color: inherit; text-decoration: none; }
+  .article h1 { font-size: 20pt; }
+  .article h2 { font-size: 15pt; break-after: avoid; }
+  .article h3 { font-size: 12.5pt; break-after: avoid; }
+  .article pre { white-space: pre-wrap; break-inside: avoid; }
+  .article pre code { white-space: pre-wrap; }
+  .table-wrap { overflow: visible; }
+  .article table, .article blockquote, .article details, .article li.task { break-inside: avoid; }
+  .article details > summary { list-style: none; }
+  .article li.task.checked label { text-decoration: none; }
+  .print-cover { break-after: page; }
+  .print-lesson { margin-top: 0; break-before: page; }
+  .print-lesson h1 { margin-top: 0; }
+  @page { margin: 16mm 14mm; }
+}
