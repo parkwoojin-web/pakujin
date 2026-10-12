@@ -1,0 +1,104 @@
+{
+  "id": "first-run",
+  "title": "첫 실행과 첫 웹페이지",
+  "lesson": "02-install-and-first-run",
+  "description": "폴더로 이동해서 Claude Code를 실행하고, 첫 웹페이지를 만들어 봅니다.",
+  "shell": "PS C:\\Users\\me>",
+  "steps": [
+    {
+      "goal": "설치가 잘 됐는지 버전을 확인하세요.",
+      "expect": {
+        "type": "exact",
+        "value": "claude --version"
+      },
+      "hint": "claude --version 을 입력하세요.",
+      "output": [
+        "2.1.300 (Claude Code)"
+      ]
+    },
+    {
+      "goal": "연습용 폴더 my-first-project 로 이동하세요.",
+      "expect": {
+        "type": "exact",
+        "value": "cd my-first-project"
+      },
+      "hint": "cd 와 폴더 이름 사이에 띄어쓰기를 넣어서 cd my-first-project 를 입력하세요.",
+      "shell": "PS C:\\Users\\me\\my-first-project>",
+      "output": []
+    },
+    {
+      "goal": "Claude Code를 실행하세요.",
+      "expect": {
+        "type": "exact",
+        "value": "claude"
+      },
+      "hint": "claude 라고만 입력하면 됩니다.",
+      "mode": "claude",
+      "output": [
+        "claude:✻ Welcome to Claude Code!",
+        "dim:  /help 로 도움말 · /powerup 으로 기능 둘러보기",
+        "dim:  cwd: C:\\Users\\me\\my-first-project",
+        "status:⏵⏵ auto mode on (shift+tab to cycle)"
+      ]
+    },
+    {
+      "goal": "처음 배울 때는 수동 모드가 좋습니다. Shift+Tab 을 눌러 수동 모드로 바꾸세요. (폰에서는 아래 [Shift+Tab] 버튼)",
+      "expect": {
+        "type": "key",
+        "value": "shift+tab"
+      },
+      "hint": "키보드의 Shift 를 누른 채 Tab 을 누르거나, 아래 [Shift+Tab] 버튼을 누르세요.",
+      "output": [
+        "status:⏸ manual mode on (shift+tab to cycle)"
+      ]
+    },
+    {
+      "goal": "hello.html 을 만들어 달라고 한국어로 요청하세요. (예: hello.html 파일을 만들어 줘. 가운데에 인사말을 크게 써 줘)",
+      "expect": {
+        "type": "keywords",
+        "all": [
+          "hello.html"
+        ],
+        "any": [
+          "만들어",
+          "만들",
+          "생성"
+        ]
+      },
+      "hint": "'hello.html' 과 '만들어' 가 들어간 문장으로 요청해 보세요.",
+      "output": [
+        "claude:● hello.html 파일을 만들어 가운데에 인사말을 크게 표시하겠습니다.",
+        "tool:● Write(hello.html)",
+        "ask:  hello.html 파일을 만들까요?",
+        "ask:  ❯ 1. Yes",
+        "ask:    2. Yes, allow all edits during this session",
+        "ask:    3. No",
+        "dim:  (번호를 입력하세요)"
+      ]
+    },
+    {
+      "goal": "이번 한 번만 허용하려면 1 을 입력하세요.",
+      "expect": {
+        "type": "exact",
+        "value": "1"
+      },
+      "hint": "1 을 입력하면 이번 한 번만 허용합니다.",
+      "output": [
+        "ok:  ⎿ hello.html 을 만들었습니다 (24줄)",
+        "claude:● 완료했습니다! 파일 탐색기에서 hello.html 을 더블클릭하면 브라우저에서 볼 수 있어요."
+      ]
+    },
+    {
+      "goal": "Claude Code를 종료하세요.",
+      "expect": {
+        "type": "exact",
+        "value": "/exit"
+      },
+      "hint": "/exit 를 입력하세요.",
+      "mode": "shell",
+      "output": [
+        "dim:Bye!"
+      ]
+    }
+  ]
+}
