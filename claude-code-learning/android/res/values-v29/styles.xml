@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 10 이상: 기기의 다크 모드 설정을 따라가서 웹 화면의 prefers-color-scheme도 함께 바뀐다 -->
+    <style name="AppTheme" parent="@android:style/Theme.DeviceDefault.DayNight">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:colorAccent">#c2410c</item>
+    </style>
+</resources>
