@@ -30,6 +30,12 @@
     invoke-direct {v1, p0}, Lcom/pakujin/claudeguide/GuideWebViewClient;-><init>(Landroid/app/Activity;)V
     invoke-virtual {v0, v1}, Landroid/webkit/WebView;->setWebViewClient(Landroid/webkit/WebViewClient;)V
 
+    # 웹 화면의 인쇄 버튼이 기기의 인쇄 기능을 쓸 수 있게 연결한다 (window.AndroidPrint)
+    new-instance v1, Lcom/pakujin/claudeguide/PrintBridge;
+    invoke-direct {v1, p0, v0}, Lcom/pakujin/claudeguide/PrintBridge;-><init>(Landroid/app/Activity;Landroid/webkit/WebView;)V
+    const-string v2, "AndroidPrint"
+    invoke-virtual {v0, v1, v2}, Landroid/webkit/WebView;->addJavascriptInterface(Ljava/lang/Object;Ljava/lang/String;)V
+
     invoke-virtual {p0, v0}, Lcom/pakujin/claudeguide/MainActivity;->setContentView(Landroid/view/View;)V
 
     # 화면 회전 등으로 다시 만들어질 때는 보던 페이지를 복원한다
