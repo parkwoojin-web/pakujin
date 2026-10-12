@@ -3,7 +3,12 @@
 | 파일 | 설명 |
 |---|---|
 | `claude-code-guide.html` | 웹 버전. 내려받아 더블클릭하면 브라우저에서 열립니다. 인터넷 없이도 동작합니다. |
-| `claude-code-guide.apk` | Android 앱 (Android 7.0 이상). |
+| `claude-code-guide.apk` | Android 앱 (Android 7.0 이상). v1.1.0 |
+
+## 인쇄
+- **장별 인쇄**: 각 장 제목 아래의 **🖨 이 장 인쇄**
+- **전체 인쇄**: 홈 화면이나 각 장의 **📚 전체 인쇄** (표지와 차례, 장마다 새 페이지)
+- Android 앱에서는 기기의 인쇄 화면이 열리며, 프린터 대신 **PDF로 저장**을 고를 수도 있습니다.
 
 ## Android 앱 설치 방법
 1. 폰에서 `claude-code-guide.apk`를 내려받습니다.

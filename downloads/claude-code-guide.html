@@ -254,6 +254,41 @@ code, pre, .terminal { font-family: "D2Coding", "SFMono-Regular", Menlo, Consola
 .toast.show { opacity: 1; }
 .footer-note { margin-top: 40px; font-size: 13px; color: var(--text-2); text-align: center; }
 
+/* 인쇄 */
+.print-bar { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 20px; }
+.print-cover h1 { font-size: 32px; }
+.print-toc { padding-left: 2.4em; }
+.print-toc li { margin: 4px 0; }
+.print-date { color: var(--text-2); font-size: 14px; }
+.print-lesson { margin-top: 56px; }
+
+@media print {
+  :root, :root:not([data-theme="light"]), :root[data-theme="dark"] {
+    --bg: #ffffff; --surface: #ffffff; --surface-2: #f2f0eb; --text: #000000; --text-2: #444444;
+    --border: #cccccc; --accent: #9a3412; --accent-soft: #f7f2ee; --ok: #15803d; --code-bg: #f5f5f5;
+    color-scheme: light;
+  }
+  body { background: #fff; font-size: 11pt; line-height: 1.6; }
+  .topbar, .sidebar, .backdrop, .toast, .no-print, .copy-btn, .lesson-footer, .keybar { display: none !important; }
+  .layout { display: block; min-height: 0; }
+  .main { padding: 0; }
+  .content { max-width: none; }
+  a { color: inherit; text-decoration: none; }
+  .article h1 { font-size: 20pt; }
+  .article h2 { font-size: 15pt; break-after: avoid; }
+  .article h3 { font-size: 12.5pt; break-after: avoid; }
+  .article pre { white-space: pre-wrap; break-inside: avoid; }
+  .article pre code { white-space: pre-wrap; }
+  .table-wrap { overflow: visible; }
+  .article table, .article blockquote, .article details, .article li.task { break-inside: avoid; }
+  .article details > summary { list-style: none; }
+  .article li.task.checked label { text-decoration: none; }
+  .print-cover { break-after: page; }
+  .print-lesson { margin-top: 0; break-before: page; }
+  .print-lesson h1 { margin-top: 0; }
+  @page { margin: 16mm 14mm; }
+}
+
 </style>
 </head>
 <body>
@@ -482,7 +517,8 @@ if (typeof module !== "undefined") module.exports = { matchStep, normalize };
         ]),
         el("div", { class: "btn-row" }, [
           el("a", { class: "btn", href: "#/lesson/" + next.id, text: startLabel }),
-          el("a", { class: "btn ghost", href: "#/practice", text: "💻 가상 터미널 실습" })
+          el("a", { class: "btn ghost", href: "#/practice", text: "💻 가상 터미널 실습" }),
+          el("button", { class: "btn ghost", type: "button", text: "🖨 전체 인쇄", onclick: printAll })
         ])
       ]),
       el("h2", { class: "section-title", text: "📚 가이드" }),
@@ -522,9 +558,15 @@ if (typeof module !== "undefined") module.exports = { matchStep, normalize };
     // 제목 바로 아래에 시간 정보 표시
     var h1 = article.querySelector("h1");
     if (h1) {
-      h1.insertAdjacentElement("afterend", el("div", { class: "meta" }, [
+      var meta = el("div", { class: "meta" }, [
         el("span", { class: "chip", text: "⏱ " + lesson.duration }),
         el("span", { class: "chip", text: "최종 확인 " + lesson.lastVerified })
+      ]);
+      h1.insertAdjacentElement("afterend", meta);
+      meta.insertAdjacentElement("afterend", printBar([
+        el("button", { class: "small-btn", type: "button", text: "🖨 이 장 인쇄",
+          onclick: function () { printNow("클로드 코드 첫걸음 - " + lesson.title); } }),
+        el("button", { class: "small-btn", type: "button", text: "📚 전체 인쇄", onclick: printAll })
       ]));
     }
 
@@ -803,6 +845,66 @@ if (typeof module !== "undefined") module.exports = { matchStep, normalize };
     if (window.matchMedia && window.matchMedia("(min-width: 901px)").matches) input.focus();
   }
 
+  // ── 인쇄 ──────────────────────────────────────────────────
+  // Android 앱의 WebView는 window.print()를 지원하지 않아서, 앱이 넣어 주는
+  // AndroidPrint.print()로 기기의 인쇄 화면(PDF 저장 포함)을 연다.
+  var pendingPrintAll = false;
+
+  function printBar(buttons) {
+    return el("div", { class: "print-bar no-print" }, buttons);
+  }
+
+  function printNow(jobName) {
+    // 접혀 있는 퀴즈 정답도 인쇄되도록 모두 펼친다
+    Array.prototype.forEach.call(document.querySelectorAll("details"), function (d) { d.open = true; });
+    if (window.AndroidPrint && typeof window.AndroidPrint.print === "function") {
+      window.AndroidPrint.print(jobName);
+    } else {
+      window.print();
+    }
+  }
+
+  function printAll() {
+    if (location.hash === "#/print") {
+      printNow("클로드 코드 첫걸음 - 전체");
+      return;
+    }
+    pendingPrintAll = true;
+    location.hash = "#/print";
+  }
+
+  function renderPrintAll() {
+    var sections = LESSONS.map(function (lesson) {
+      var article = el("article", { class: "article print-lesson", html: lesson.html });
+      enhanceArticle(article, lesson.id);
+      return article;
+    });
+    var cover = el("section", { class: "article print-cover" }, [
+      el("h1", { text: "클로드 코드 첫걸음" }),
+      el("p", { text: "개발 초보자를 위한 Claude Code 사용법 가이드" }),
+      el("p", { class: "print-date", text: "내용 최종 확인일: " + DATA.lastVerified }),
+      el("h2", { text: "차례" }),
+      el("ol", { class: "print-toc" }, LESSONS.map(function (lesson) {
+        return el("li", { text: lesson.title.replace(/^\d+\.\s*/, "") + " (" + lesson.duration + ")" });
+      }))
+    ]);
+    main.innerHTML = "";
+    main.appendChild(el("div", { class: "content" }, [
+      printBar([
+        el("button", { class: "btn", type: "button", text: "🖨 인쇄하기",
+          onclick: function () { printNow("클로드 코드 첫걸음 - 전체"); } }),
+        el("a", { class: "btn ghost", href: "#/", text: "← 홈으로" })
+      ]),
+      cover
+    ].concat(sections)));
+    window.scrollTo(0, 0);
+    if (pendingPrintAll) {
+      pendingPrintAll = false;
+      // 화면이 다 그려진 뒤에 인쇄 창을 연다
+      setTimeout(function () { printNow("클로드 코드 첫걸음 - 전체"); }, 300);
+    }
+  }
+
   function renderNotFound() {
     main.innerHTML = "";
     main.appendChild(el("div", { class: "content article" }, [
@@ -820,6 +922,7 @@ if (typeof module !== "undefined") module.exports = { matchStep, normalize };
     else if (parts[0] === "lesson") renderLesson(decodeURIComponent(parts[1] || ""));
     else if (parts[0] === "practice" && parts[1]) renderPractice(decodeURIComponent(parts[1]));
     else if (parts[0] === "practice") renderPracticeList();
+    else if (parts[0] === "print") renderPrintAll();
     else renderNotFound();
     renderNav();
     renderProgressPill();
